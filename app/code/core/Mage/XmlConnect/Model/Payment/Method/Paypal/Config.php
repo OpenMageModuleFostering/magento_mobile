@@ -48,4 +48,19 @@ class Mage_XmlConnect_Model_Payment_Method_Paypal_Config extends Mage_Paypal_Mod
     {
         return $this->getPaypalUrl(array('cmd' => '_express-checkout-mobile', 'token' => $token));
     }
+
+    /**
+     * Map any supported payment method into a config path by specified field name
+     *
+     * @param string $fieldName
+     * @return string|null
+     */
+    protected function _getSpecificConfigPath($fieldName)
+    {
+        $path = parent::_getSpecificConfigPath($fieldName);
+        if ($path === null && $this->_methodCode == self::METHOD_WPP_MECL) {
+            $path = $this->_mapExpressFieldset($fieldName);
+        }
+        return $path;
+    }
 }
