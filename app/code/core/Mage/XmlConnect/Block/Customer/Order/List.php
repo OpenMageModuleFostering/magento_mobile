@@ -20,7 +20,7 @@
  *
  * @category    Mage
  * @package     Mage_XmlConnect
- * @copyright   Copyright (c) 2010 Magento Inc. (http://www.magentocommerce.com)
+ * @copyright   Copyright (c) 2014 Magento Inc. (http://www.magentocommerce.com)
  * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
@@ -45,18 +45,33 @@ class Mage_XmlConnect_Block_Customer_Order_List extends Mage_Core_Block_Abstract
      */
     protected function _toHtml()
     {
+        /** @var $ordersXmlObj Mage_XmlConnect_Model_Simplexml_Element */
         $ordersXmlObj = Mage::getModel('xmlconnect/simplexml_element', '<orders></orders>');
 
+        /** @var $orders Mage_Sales_Model_Resource_Order_Collection */
         $orders = Mage::getResourceModel('sales/order_collection')->addFieldToSelect('*')->addFieldToFilter(
             'customer_id', Mage::getSingleton('customer/session')->getCustomer()->getId()
         )->addFieldToFilter('state', array(
             'in' => Mage::getSingleton('sales/order_config')->getVisibleOnFrontStates()
         ))->setOrder('created_at', 'desc');
 
-        $orders->getSelect()->limit(self::ORDERS_LIST_LIMIT, 0);
+        /** @var $request Mage_Core_Controller_Request_Http */
+        $request = $this->getRequest();
+        /**
+         * Apply offset and count
+         */
+        $count = abs((int)$request->getParam('count', 0));
+        $count = $count ? $count : self::ORDERS_LIST_LIMIT;
+        $offset = abs((int)$request->getParam('offset', 0));
+
+
+        $ordersXmlObj->addAttribute('orders_count', $ordersXmlObj->escapeXml($orders->count()));
+        $ordersXmlObj->addAttribute('offset', $ordersXmlObj->escapeXml($offset));
+
+        $orders->clear()->getSelect()->limit($count, $offset);
         $orders->load();
 
-        if (sizeof($orders->getItems())) {
+        if ($orders->count()) {
             foreach ($orders as $order) {
                 $item = $ordersXmlObj->addChild('item');
                 $item->addChild('entity_id', $order->getId());

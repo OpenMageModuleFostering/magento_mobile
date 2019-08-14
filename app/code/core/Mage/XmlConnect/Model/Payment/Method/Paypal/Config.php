@@ -20,7 +20,7 @@
  *
  * @category    Mage
  * @package     Mage_XmlConnect
- * @copyright   Copyright (c) 2010 Magento Inc. (http://www.magentocommerce.com)
+ * @copyright   Copyright (c) 2014 Magento Inc. (http://www.magentocommerce.com)
  * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
@@ -57,10 +57,16 @@ class Mage_XmlConnect_Model_Payment_Method_Paypal_Config extends Mage_Paypal_Mod
      */
     protected function _getSpecificConfigPath($fieldName)
     {
-        $path = parent::_getSpecificConfigPath($fieldName);
-        if ($path === null && $this->_methodCode == self::METHOD_WPP_MECL) {
-            $path = $this->_mapExpressFieldset($fieldName);
+        $path = $this->_mapExpressFieldset($fieldName);
+
+        if ($path === null) {
+            $path = $this->_mapWppFieldset($fieldName);
         }
+
+        if ($path === null) {
+            $path = parent::_getSpecificConfigPath($fieldName);
+        }
+
         return $path;
     }
 }
