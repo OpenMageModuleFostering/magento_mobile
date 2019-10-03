@@ -1,16 +1,19 @@
 {
-    "name": "OpenMageModuleFostering/Magento_Mobile",
+    "name": "OpenMageModuleFostering\/Magento_Mobile",
     "type": "magento-module",
     "license": "mixed",
     "homepage": "",
     "description": "Magento Mobile Xml Interface",
     "authors": [
-    {
-        "name": "Magento Core Team",
-        "email": "core@magentocommerce.com"
-    }
-],
+        {
+            "name": "Magento Core Team",
+            "email": "core@magentocommerce.com"
+        }
+    ],
     "suggest": {
-        "magento-hackathon/magento-composer-installer": "*"
-    }
+        "magento-hackathon\/magento-composer-installer": "*"
+    },
+    "keywords": [
+        "openmage-module"
+    ]
 }
